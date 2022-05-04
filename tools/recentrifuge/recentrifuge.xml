@@ -125,13 +125,10 @@
             <conditional name="db_type">
                 <param name="db_select" type="select" label="Cached database with clade-specific marker genes">
                     <option value="cached" selected="true">Locally installed</option>
-                  <option value="history">From history</option>
+                    <option value="history">From history</option>
                 </param>
                 <when value="cached">
                     <param name="cached_db" type="select" label="Cached database whith taxa ID">
-                        <options from_data_table="recentrifuge_database">
-                            <validator message="No recentrifuge database is available" type="no_options"/>
-                        </options>
                         <options from_data_table="ncbi_taxonomy">
                             <validator message="No NCBI database is available" type="no_options"/>
                         </options>
