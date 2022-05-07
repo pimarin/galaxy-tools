@@ -30,16 +30,16 @@
               genus/species/strain/plasmid
         ======================================*#
             #if $organism.genus
-                '$organism.genus'
+                --genus '$organism.genus'
             #end if
             #if $organism.species
-                '$organism.species'
+                --species '$organism.species'
             #end if
             #if $organism.strain
-                '$organism.strain'
+                --strain '$organism.strain'
             #end if
             #if $organism.plasmid
-                '$organism.plasmid'
+                --plasmid '$organism.plasmid'
             #end if
         #*======================================
                     Annotation options
@@ -49,13 +49,19 @@
             #if $annotation.prodigal
                 --prodigal-tf '$annotation.prodigal'
             #end if
+            #if $annotation.translation_table
+                --translation-table '$annotation.translation_table'
+            #end if
+            #if $annotation.gram
+                --gram '$annotation.gram'
+            #end if
             $annotation.keep_contig_headers
             #if $annotation.replicons
-                '$annotation.replicons'
+                --replicons '$annotation.replicons'
             #end if
             $annotation.compliant
             #if $annotation.proteins
-                '$annotation.proteins'
+                --proteins '$annotation.proteins'
             #end if
         #*======================================
                     Workflow OPTIONS
@@ -88,20 +94,28 @@
                     <validator message="No bakta database is available" type="no_options"/>
                 </options>
             </param>
-            <param name="input_file" type="data" format="fasta,zip" label="Select genome in (zipped) fasta format"/>
+            <param name="input_file" type="data" format="fasta" label="Select genome in fasta format"/>
             <param name="min_contig_length" type="integer" optional="true" min="0" label="Minimum contig size" help="Minimum contig size (default = 1; 200 in compliant mode) (--min-contig-length)"/>
         </section>
         <!-- Organism INFORMATION OPTIONS -->
         <section name="organism" title="Optional organism options" expanded="false">
-            <param argument="--genus" type="text" optional="true" label="Specify genus name" help="ex. Escherichia" />
-            <param argument="--species" type="text" optional="true" label="Specify species name" help="ex. 'coli O157:H7'" />
-            <param argument="--strain" type="text" optional="true" label="Specify strain name" help="ex. Sakai" />
-            <param argument="--plasmid" type="text" optional="true" label="Specify plasmid name" help="ex. pOSAK1" />
+            <param argument="--genus" type="text" optional="true" label="Specify genus name" help="ex. Escherichia">
+                <validator type="regex">^[A-Z]</validator>
+            </param>
+            <param argument="--species" type="text" optional="true" label="Specify species name" help="ex. 'coli O157:H7'"/>
+            <param argument="--strain" type="text" optional="true" label="Specify strain name" help="ex. Sakai">
+                <validator type="regex">^[A-Z]</validator>
+            </param>
+            <param argument="--plasmid" type="text" optional="true" label="Specify plasmid name" help="ex. pOSAK1"/>
         </section>
         <!-- ANNOTATION -->
         <section name="annotation" title="Optional annotation">
             <param argument="--complete" type="boolean" truevalue="--complete" falsevalue="" label="Complete replicons" help="All sequences are complete replicons (chromosome/plasmid[s])"/>
-            <param name="prodigal" type="data" format="txt" optional="true" label="Prodigal file" help="Prodigal training file for CDS prediction (--prodigal-tf)"/>
+            <param argument="--prodigal" type="data" format="txt" optional="true" label="Prodigal file" help="Prodigal training file for CDS prediction"/>
+            <param name="translation_table"  type="select" optional="true" label="Translation table" help="Default is the bacterial table 11">
+                <option value="4">4 Mold, Protozoan, and Coelenterate Mitochondrial Code and the Mycoplasma/Spiroplasma Code</option>
+                <option value="11" selected="true">11 Bacterial, Archaeal and Plant Plastid Code</option>
+            </param>
             <param argument="--gram" type="select" optional="true" label="Gram type for signal peptide predictions" help="Gram type +/- or unknown. Default: unknown">
                 <option value="+">Gram+</option>
                 <option value="-">Gram-</option>
@@ -135,46 +149,50 @@
         <data name="annotation_fna" format="fasta" from_work_dir="bakta_output.fna" label="${tool.name} on ${on_string}: bakta_output.fna"/>
         <data name="annotation_ffn" format="fasta" from_work_dir="bakta_output.ffn" label="${tool.name} on ${on_string}: bakta_output.ffn"/>
         <data name="annotation_faa" format="fasta" from_work_dir="bakta_output.faa" label="${tool.name} on ${on_string}: bakta_output.faa"/>
-        <data name="hypotheticals_tsv" format="tabular" from_work_dir="bakta_output.hypotheticals.tsv" label="${tool.name} on ${on_string}: bakta_output.hypotheticals.tsv"/>
-        <data name="hypotheticals_faa" format="fasta" from_work_dir="bakta_output.hypotheticals.faa" label="${tool.name} on ${on_string}: bakta_output.hypotheticals.faa"/>
+        <data name="hypotheticals_tsv" format="tabular" from_work_dir="bakta_output.hypotheticals.tsv" label="${tool.name} on ${on_string}: bakta_output.hypotheticals.tsv">
+            <filter>workflow['skip_cds'] == False</filter>
+        </data>
+        <data name="hypotheticals_faa" format="fasta" from_work_dir="bakta_output.hypotheticals.faa" label="${tool.name} on ${on_string}: bakta_output.hypotheticals.faa">
+          <filter>workflow['skip_cds'] == False</filter>
+        </data>
         <data name="summary_txt" format="txt" from_work_dir="bakta_output.txt" label="${tool.name} on ${on_string}: bakta_output.txt"/>
         <data name="annotation_json" format="json" from_work_dir="bakta_output.json" label="${tool.name} on ${on_string}: bakta_output.json"/>
     </outputs>
 
     <tests>
-      <test expect_num_outputs="12"> <!-- TEST_1 -->
+      <test expect_num_outputs="12"> <!-- TEST_1 database + input -->
           <section name="input_option" >
               <param name="db_select" value="test-db-bakta"/>
               <param name="input_file" value="NC_002127.1.fna"/>
           </section>
-          <output name="logfile" value="TEST_1/TEST_1.log">
+          <output name="logfile" value="TEST_1/TEST_1.log" lines_diff="4">
               <assert_contents>
                   <has_text_matching n="1" expression="Genome size: 3,306 bp"/>
-                  <has_n_lines n="174" delta="1"/>
+                  <has_n_lines n="90" delta="1"/>
               </assert_contents>
           </output>
-          <output name="annotation_tsv" value="TEST_1/TEST_1.tsv">
+          <output name="annotation_tsv" value="TEST_1/TEST_1.tsv" lines_diff="2">
               <assert_contents>
                   <has_text_matching n="3" expression="contig_1"/>
                   <has_n_lines n="6" delta="1"/>
               </assert_contents>
           </output>
-          <output name="annotation_gff3" value="TEST_1/TEST_1.gff3">
+          <output name="annotation_gff3" value="TEST_1/TEST_1.gff3" lines_diff="2">
               <assert_contents>
                   <has_text_matching expression="AGCTATTCCTGGTTTCATATGAAACAAACCATGCCTGTTCTCATGCCAGTAAGTGTAGCA"/>
                   <has_n_lines n="70" delta="1"/>
               </assert_contents>
           </output>
-          <output name="annotation_gbff" value="TEST_1/TEST_1.gbff">
+          <output name="annotation_gbff" value="TEST_1/TEST_1.gbff" lines_diff="4">
               <assert_contents>
                   <has_text_matching expression="SSASSCSFSHMVACSSASSASSFSSSVRLWLFMNPAMLSAVCCCL"/>
                   <has_n_lines n="133" delta="1"/>
               </assert_contents>
           </output>
-          <output name="annotation_embl" value="TEST_1/TEST_1.embl">
+          <output name="annotation_embl" value="TEST_1/TEST_1.embl" lines_diff="2">
               <assert_contents>
                   <has_text_matching expression="FIFLFSPFCLSSASCDYIAHHFSTVLPPVFCRRTFQSDNTVTAKKQQCFVGNSNLQTGQ"/>
-                  <has_n_lines n="137" delta="1"/>
+                  <has_n_lines n="137" delta="2"/>
               </assert_contents>
           </output>
           <output name="annotation_fna" value="TEST_1/TEST_1.fna">
@@ -197,7 +215,7 @@
           </output>
           <output name="hypotheticals_tsv" value="TEST_1/TEST_1.hypotheticals.tsv">
               <assert_contents>
-                  <has_text_matching expression="contig_1	2	736	+	DOGAIA_00005	27.1	9.5"/>
+                  <has_text_matching expression="DOGAIA_00010"/>
                   <has_n_lines n="6"/>
               </assert_contents>
           </output>
@@ -213,13 +231,268 @@
                   <has_n_lines n="29"/>
               </assert_contents>
             </output>
-          <output name="annotation_json" value="TEST_1/TEST_1.json">
+          <output name="annotation_json" value="TEST_1/TEST_1.json" lines_diff="4">
               <assert_contents>
                   <has_text_matching expression="0.6524500907441017"/>
-                  <has_n_lines n="113"/>
+                  <has_n_lines n="112" delta="1"/>
               </assert_contents>
           </output>
       </test>
+      <test expect_num_outputs="12"> <!-- TEST_2 another input, add organism info some annotations and skip 2 steps  -->
+          <section name="input_option" >
+              <param name="db_select" value="test-db-bakta"/>
+              <param name="input_file" value="GCF_000008865.2.fna"/>
+              <param name="min_contig_length" value="250"/>
+          </section>
+          <section name="organism">
+              <param name="genus" value="Escherichia"/>
+              <param name="species" value="coli O157:H7"/>
+              <param name="strain" value="Sakai"/>
+              <param name="plasmid" value="pOSAK1"/>
+          </section>
+          <section name="annotation">
+              <param name="--gram" value="-"/>
+              <param name="keep_contig_headers" value="true"/>
+          </section>
+          <section name="workflow">
+            <param name="skip_crispr" value="true"/>
+              <param name="skip_gap" value="true"/>
+          </section>
+          <output name="logfile" value="TEST_2/TEST_2.log" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="Genome size: 5,501,884 bp"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_tsv" value="TEST_2/TEST_2.tsv" lines_diff="2">
+              <assert_contents>
+                  <has_text_matching expression="RFAM:RF00506"/>
+                  <has_n_lines n="5468" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_gff3" value="TEST_2/TEST_2.gff3" lines_diff="2">
+              <assert_contents>
+                  <has_text_matching expression="ID=NC_002695.2;Name=NC_002695.2;Is_circular=true"/>
+                  <has_n_lines n="97179" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_gbff" value="TEST_2/TEST_2.gbff" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                  <has_n_lines n="172343" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_embl" value="TEST_2/TEST_2.embl" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                  <has_n_lines n="172350" delta="2"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_fna" value="TEST_2/TEST_2.fna">
+              <assert_contents>
+                  <has_text_matching expression="NC_002695.2"/>
+                  <has_n_lines n="91701"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_ffn" value="TEST_2/TEST_2.ffn">
+              <assert_contents>
+                  <has_text_matching expression="CTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTCTCTGACAGCAGCTTCTGAACTGGTTACCTGCCGTGAGTAA"/>
+                  <has_n_lines n="10928"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_faa" value="TEST_2/TEST_2.faa">
+              <assert_contents>
+                  <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                  <has_n_lines n="10584"/>
+              </assert_contents>
+          </output>
+          <output name="hypotheticals_tsv" value="TEST_2/TEST_2.hypotheticals.tsv">
+              <assert_contents>
+                  <has_text_matching expression="NC_002695.2" n="5285"/>
+                  <has_n_lines n="5292"/>
+              </assert_contents>
+          </output>
+          <output name="hypotheticals_faa" value="TEST_2/TEST_2.hypotheticals.faa">
+              <assert_contents>
+                  <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                  <has_n_lines n="10578"/>
+              </assert_contents>
+          </output>
+          <output name="summary_txt" value="TEST_2/TEST_2.txt">
+              <assert_contents>
+                  <has_text_matching expression="N50: 5498578"/>
+                  <has_n_lines n="29"/>
+              </assert_contents>
+            </output>
+          <output name="annotation_json" value="TEST_2/TEST_2.json" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="0.505327629590155"/>
+                  <has_n_lines n="125400" delta="1"/>
+              </assert_contents>
+          </output>
+      </test>
+      <test expect_num_outputs="10"> <!-- TEST_3 test all skip steps  -->
+          <section name="input_option" >
+              <param name="db_select" value="test-db-bakta"/>
+              <param name="input_file" value="GCF_000008865.2.fna"/>
+              <param name="min_contig_length" value="250"/>
+          </section>
+          <section name="workflow">
+            <param name="skip_trna" value="true"/>
+            <param name="skip_tmrna" value="true"/>
+            <param name="skip_rrna" value="true"/>
+            <param name="skip_ncrna" value="true"/>
+            <param name="skip_ncrna_region" value="true"/>
+            <param name="skip_crispr" value="true"/>
+            <param name="skip_cds" value="true"/>
+            <param name="skip_sorf" value="true"/>
+            <param name="skip_gap" value="true"/>
+            <param name="skip_ori" value="true"/>
+          </section>
+          <output name="logfile" value="TEST_3/TEST_3.log" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="Genome size: 5,501,884 bp"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_tsv" value="TEST_3/TEST_3.tsv" lines_diff="2">
+              <assert_contents>
+                  <has_text_matching expression="Ile_trna" n="3"/>
+                  <has_n_lines n="179" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_gff3" value="TEST_3/TEST_3.gff3" lines_diff="2">
+              <assert_contents>
+                  <has_text_matching expression="RFAM:RF02564" n="57"/>
+                  <has_n_lines n="91889" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_gbff" value="TEST_3/TEST_3.gbff" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="RF02564" n="513"/>
+                  <has_n_lines n="93592" delta="1"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_embl" value="TEST_3/TEST_3.embl" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="RF02564" n="513"/>
+                  <has_n_lines n="93600" delta="2"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_fna" value="TEST_3/TEST_3.fna">
+              <assert_contents>
+                  <has_text_matching expression="CATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAA"/>
+                  <has_n_lines n="91701"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_ffn" value="TEST_3/TEST_3.ffn">
+              <assert_contents>
+                  <has_text_matching expression="AGGCTTGTAGCTCAGGTGGTTAGAGCGCACCCCTGATAAGGG"/>
+                  <has_n_lines n="346"/>
+              </assert_contents>
+          </output>
+          <output name="annotation_faa" value="TEST_3/TEST_3.faa">
+              <assert_contents>
+                  <has_text_matching expression="MIRIISRANSVTSSNEVNRLVTGQIPHD"/>
+                  <has_n_lines n="2"/>
+              </assert_contents>
+          </output>
+          <output name="summary_txt" value="TEST_3/TEST_3.txt">
+              <assert_contents>
+                  <has_text_matching expression="N50: 5498578"/>
+                  <has_n_lines n="29"/>
+              </assert_contents>
+            </output>
+          <output name="annotation_json" value="TEST_3/TEST_3.json" lines_diff="4">
+              <assert_contents>
+                  <has_text_matching expression="0.004420849294532563"/>
+                  <has_n_lines n="3681" delta="1"/>
+              </assert_contents>
+          </output>
+        </test>
+        <test expect_num_outputs="12"> <!-- TEST_4 annotations   -->
+            <section name="input_option" >
+                <param name="db_select" value="test-db-bakta"/>
+                <param name="input_file" value="GCF_000008865.2.fna"/>
+            </section>
+            <section name="annotation">
+                <param name="complete" value="true"/>
+                <param name="translation_table" value="4"/>
+                <param name="prodigal" value="prodigal.tf"/>
+                <param name="replicons" value="replicons.tsv"/>
+                <param name="compliant" value="true"/>
+                <param name="proteins" value="user-proteins.faa"/>
+            </section>
+            <output name="logfile" value="TEST_4/TEST_4.log" lines_diff="4">
+                <assert_contents>
+                    <has_text_matching expression="Genome size: 5,501,884 bp"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_tsv" value="TEST_4/TEST_4.tsv" lines_diff="2">
+                <assert_contents>
+                    <has_text_matching expression="mock1"/>
+                    <has_n_lines n="5470" delta="1"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_gff3" value="TEST_4/TEST_4.gff3" lines_diff="2">
+                <assert_contents>
+                    <has_text_matching expression="ID=BALIOE_00005_gene;locus_tag=BALIOE_00005"/>
+                    <has_n_lines n="10942" delta="1"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_gbff" value="TEST_4/TEST_4.gbff" lines_diff="4">
+                <assert_contents>
+                    <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                    <has_n_lines n="172334" delta="1"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_embl" value="TEST_4/TEST_4.embl" lines_diff="4">
+                <assert_contents>
+                    <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                    <has_n_lines n="172342" delta="2"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_fna" value="TEST_4/TEST_4.fna">
+                <assert_contents>
+                    <has_text_matching expression="ACTTTAACCAATATAGGCATAGCG"/>
+                    <has_n_lines n="91701"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_ffn" value="TEST_4/TEST_4.ffn">
+                <assert_contents>
+                    <has_text_matching expression="CTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTCTCTGACAGCAGCTTCTGAACTGGTTACCTGCCGTGAGTAA"/>
+                    <has_n_lines n="10928"/>
+                </assert_contents>
+            </output>
+            <output name="annotation_faa" value="TEST_4/TEST_4.faa">
+                <assert_contents>
+                    <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                    <has_n_lines n="10584"/>
+                </assert_contents>
+            </output>
+            <output name="hypotheticals_tsv" value="TEST_4/TEST_4.hypotheticals.tsv">
+                <assert_contents>
+                    <has_text_matching expression="p2" n="3"/>
+                    <has_n_lines n="5292"/>
+                </assert_contents>
+            </output>
+            <output name="hypotheticals_faa" value="TEST_4/TEST_4.hypotheticals.faa">
+                <assert_contents>
+                    <has_text_matching expression="LFILTATGNMSLCGLKKESLTAASELVTCRE"/>
+                    <has_n_lines n="10578"/>
+                </assert_contents>
+            </output>
+            <output name="summary_txt" value="TEST_4/TEST_4.txt">
+                <assert_contents>
+                    <has_text_matching expression="CDSs: 5292"/>
+                    <has_n_lines n="29"/>
+                </assert_contents>
+              </output>
+            <output name="annotation_json" value="TEST_4/TEST_4.json" lines_diff="4">
+                <assert_contents>
+                    <has_text_matching expression="0.8808858929050485"/>
+                    <has_n_lines n="125423" delta="1"/>
+                </assert_contents>
+            </output>
+        </test>
     </tests>
 
     <help><![CDATA[

@@ -74,7 +74,7 @@ annotation summary:
 	oriCs/oriVs: 0
 	oriTs: 0
 
-export annotation results to: /home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data
+export annotation results to: /home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1
 	human readable TSV...
 	GFF3...
 	INSDC GenBank & EMBL...
@@ -88,87 +88,3 @@ export annotation results to: /home/pierre/Seafile/ABROMICS/galaxy-tools/tools/b
 
 If you use these results please cite Bakta: https://doi.org/10.1099/mgen.0.000685
 Annotation successfully finished in 0:00 [mm:ss].
-:19:11.564 - INFO - CONFIG - skip-rRNA=False
-17:19:11.564 - INFO - CONFIG - skip-ncRNA=False
-17:19:11.564 - INFO - CONFIG - skip-ncRNA-region=False
-17:19:11.564 - INFO - CONFIG - skip-CRISPR=False
-17:19:11.564 - INFO - CONFIG - skip-CDS=False
-17:19:11.564 - INFO - CONFIG - skip-sORF=False
-17:19:11.564 - INFO - CONFIG - skip-gap=False
-17:19:11.564 - INFO - CONFIG - skip-ori=False
-17:19:11.564 - INFO - DB - detected: major=3, minor=0, date=2021-08-9
-17:19:11.616 - INFO - UTILS - dependency: tool=tRNAscan-SE, version=v2.0.9
-17:19:11.617 - INFO - UTILS - dependency: tool=aragorn, version=v1.2.41
-17:19:11.620 - INFO - UTILS - dependency: tool=cmscan, version=v1.1.4
-17:19:11.621 - INFO - UTILS - dependency: tool=pilercr, version=v1.6.0
-17:19:11.625 - INFO - UTILS - dependency: tool=prodigal, version=v2.6.3
-17:19:11.626 - INFO - UTILS - dependency: tool=amrfinder, version=v3.10.24
-17:19:11.654 - INFO - UTILS - dependency: tool=hmmsearch, version=v3.3.2
-17:19:11.659 - INFO - UTILS - dependency: tool=diamond, version=v2.0.14
-17:19:11.692 - INFO - UTILS - dependency: tool=blastn, version=v2.12.0
-17:19:11.695 - INFO - FASTA - imported: id=NC_002127.1, length=3306, description=Escherichia coli O157:H7 str. Sakai plasmid pOSAK1, complete sequence, genomic=True, dna=True
-17:19:11.695 - INFO - MAIN - imported sequences=1
-17:19:11.695 - INFO - UTILS - qc: revised sequence: id=contig_1, orig-id=NC_002127.1, type=plasmid, complete=True, topology=circular, name=unnamed1, description='[completeness=complete] [topology=circular] [gcode=11]', orig-description='Escherichia coli O157:H7 str. Sakai plasmid pOSAK1, complete sequence'
-17:19:11.695 - INFO - FASTA - write genome sequences: path=/tmp/tmpvlwkd6t6/contigs.fna, description=False, wrap=False
-17:19:11.807 - INFO - T_RNA - predicted=0
-17:19:11.811 - INFO - TM_RNA - predicted=0
-17:19:11.825 - INFO - R_RNA - predicted=0
-17:19:11.834 - INFO - NC_RNA - predicted=0
-17:19:11.840 - INFO - NC_RNA_REGION - predicted=0
-17:19:11.842 - INFO - CRISPR - predicted=0
-17:19:11.842 - INFO - CDS - skip creation of prodigal training file: genome-size=3306
-17:19:11.842 - INFO - FASTA - write genome sequences: path=/tmp/tmpvlwkd6t6/replicons.fasta, description=False, wrap=False
-17:19:11.842 - INFO - CDS - run prodigal: type=replicons, # sequences=1
-17:19:11.864 - INFO - CDS - contig=contig_1, start=2, stop=736, strand=+, frame=2, truncated=5-prime, start-type=Edge, RBS-motif=None
-17:19:11.864 - INFO - CDS - contig=contig_1, start=971, stop=1351, strand=-, frame=3, truncated=no, start-type=ATG, RBS-motif=GGA/GAG/AGG
-17:19:11.864 - INFO - CDS - contig=contig_1, start=1348, stop=2388, strand=-, frame=1, truncated=no, start-type=ATG, RBS-motif=GGA/GAG/AGG
-17:19:11.864 - INFO - CDS - truncated CDS: contig=contig_1, start=2, stop=736, strand=+, frame=2, truncated=5-prime, start-type=Edge, RBS-motif=None, aa-hexdigest=bbb582b0498d5635f931d45732cbfcbb, aa=[SSASSCSFSH..RALLSRLMAD]
-17:19:11.864 - INFO - CDS - contig=contig_1, start=971, stop=1351, strand=-, nt=[ATGAAAAAAG..TCCAATATAA]
-17:19:11.864 - INFO - CDS - contig=contig_1, start=1348, stop=2388, strand=-, nt=[ATGGCACAGA..GAAATTATGA]
-17:19:11.864 - INFO - CDS - contig=contig_1, start=2, stop=736, strand=+, nt=[TCTTCTGCGA..GGCAGATTAG]
-17:19:11.864 - INFO - CDS - replicon cds: predicted=3
-17:19:11.864 - INFO - CDS - predicted=3
-17:19:11.865 - INFO - ORF - write internal aa seqs: # seqs=3, path=/tmp/tmpvlwkd6t6/cds.spurious.faa
-17:19:11.870 - INFO - ORF - discarded=0
-17:19:11.871 - INFO - UPS - looked-up=0
-17:19:11.871 - INFO - IPS - looked-up=0
-17:19:11.871 - INFO - ORF - write internal aa seqs: # seqs=3, path=/tmp/tmpvlwkd6t6/cds.psc.faa
-17:19:11.935 - INFO - PSC - found: PSC=0, PSCC=0
-17:19:11.935 - INFO - PSC - looked-up=0
-17:19:11.935 - INFO - PSCC - looked-up=0
-17:19:11.936 - INFO - ORF - write internal aa seqs: # seqs=3, path=/tmp/tmpvlwkd6t6/cds.expert.faa
-17:19:12.006 - INFO - EXPERT-AMRFINDER - found=0
-17:19:12.073 - INFO - EXPERT_AA_SEQ - found=0
-17:19:12.073 - INFO - ORF - write internal aa seqs: # seqs=3, path=/tmp/tmpvlwkd6t6/hypotheticals.faa
-17:19:12.078 - INFO - CDS - predicted-pfams=0, CDS-w/-pfams=0
-17:19:12.081 - INFO - S_ORF - predicted=52
-17:19:12.083 - INFO - S_ORF - sORF filter: # valid=16, # discarded=36
-17:19:12.083 - INFO - ORF - write internal aa seqs: # seqs=16, path=/tmp/tmpvlwkd6t6/sorf.spurious.faa
-17:19:12.088 - INFO - ORF - discarded=0
-17:19:12.090 - INFO - UPS - looked-up=0
-17:19:12.091 - INFO - IPS - looked-up=0
-17:19:12.091 - INFO - ORF - write internal aa seqs: # seqs=16, path=/tmp/tmpvlwkd6t6/sorf.faa
-17:19:12.157 - INFO - S_ORF - found=0
-17:19:12.157 - INFO - PSC - looked-up=0
-17:19:12.185 - INFO - ORI - predicted=0
-17:19:12.214 - INFO - ORI - predicted=0
-17:19:12.214 - INFO - UTILS - generated sequence tag prefix: prefix=DOGAIAIOFN, length=10, MD5=D80A2A28F7F69570E02EBEFB88A29E91
-17:19:12.214 - INFO - MAIN - selected features=3
-17:19:12.214 - INFO - UTILS - generated sequence tag prefix: prefix=DOGAIA, length=6, MD5=D80A2A28F7F69570E02EBEFB88A29E91
-17:19:12.214 - INFO - MAIN - locus tag prefix=DOGAIA
-17:19:12.214 - INFO - UTILS - genome-size=3306
-17:19:12.214 - INFO - UTILS - GC=0.434
-17:19:12.214 - INFO - UTILS - N=0.000
-17:19:12.214 - INFO - UTILS - N50=3306
-17:19:12.214 - INFO - UTILS - coding-ratio=0.652
-17:19:12.214 - INFO - TSV - write tsv: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.tsv
-17:19:12.214 - INFO - GFF - write GFF3: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.gff3
-17:19:12.215 - INFO - INSDC - write GenBank: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.gbff
-17:19:12.215 - INFO - INSDC - write EMBL: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.embl
-17:19:12.215 - INFO - FASTA - write genome sequences: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.fna, description=True, wrap=True
-17:19:12.215 - INFO - FASTA - write feature nucleotide sequences: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.ffn
-17:19:12.216 - INFO - FASTA - write translated CDS/sORF: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.faa
-17:19:12.216 - INFO - TSV - write hypothetical tsv: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.hypotheticals.tsv
-17:19:12.216 - INFO - FASTA - write translated CDS/sORF: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.hypotheticals.faa
-17:19:12.216 - INFO - JSON - write JSON: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_1.json
-17:19:12.217 - INFO - MAIN - removed tmp dir: /tmp/tmpvlwkd6t6
