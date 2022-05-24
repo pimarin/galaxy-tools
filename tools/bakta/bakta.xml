@@ -16,7 +16,7 @@
         #*======================================
                     Bakta database
         ======================================*#
-            --db '$input_option.db_select.fields.path'
+            --db $input_option.db_select.fields.path
             #if $input_option.min_contig_length
                 --min-contig-length $input_option.min_contig_length
             #else if $annotation.compliant
