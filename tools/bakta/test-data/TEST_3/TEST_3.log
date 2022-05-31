@@ -1,0 +1,105 @@
+parse genome sequences...
+	imported: 2
+	filtered & revised: 2
+	plasmids: 1
+
+start annotation...
+skip tRNA prediction...
+skip tmRNA prediction...
+skip rRNA prediction...
+skip ncRNA prediction...
+skip ncRNA region prediction...
+skip CRISPR array prediction...
+skip CDS prediction...
+skip sORF prediction...
+skip gap annotation...
+skip oriC/T annotation...
+apply feature overlap filters...
+select features and create locus tags...
+selected: 0
+
+genome statistics:
+	Genome size: 5,501,884 bp
+	Contigs/replicons: 2
+	GC: 50.5 %
+	N50: 5,498,578
+	N ratio: 0.0 %
+	coding density: 0.0 %
+
+annotation summary:
+	tRNAs: 0
+	tmRNAs: 0
+	rRNAs: 0
+	ncRNAs: 0
+	ncRNA regions: 0
+	CRISPR arrays: 0
+	CDSs: 0
+	  hypotheticals: 0
+	  signal peptides: 0
+	sORFs: 0
+	gaps: 0
+	oriCs/oriVs: 0
+	oriTs: 0
+
+export annotation results to: /home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3
+	human readable TSV...
+	GFF3...
+	INSDC GenBank & EMBL...
+	genome sequences...
+	feature nucleotide sequences...
+	translated CDS sequences...
+	machine readable JSON...
+	genome and annotation summary...
+
+If you use these results please cite Bakta: https://doi.org/10.1099/mgen.0.000685
+Annotation successfully finished in 0:00 [mm:ss].
+CONFIG - prefix=TEST_3
+16:56:06.057 - INFO - CONFIG - output-path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3
+16:56:06.057 - INFO - CONFIG - genus=None
+16:56:06.057 - INFO - CONFIG - species=None
+16:56:06.057 - INFO - CONFIG - strain=None
+16:56:06.057 - INFO - CONFIG - plasmid=None
+16:56:06.057 - INFO - CONFIG - complete=False
+16:56:06.057 - INFO - CONFIG - prodigal_tf=None
+16:56:06.057 - INFO - CONFIG - translation_table=11
+16:56:06.057 - INFO - CONFIG - gram=?
+16:56:06.057 - INFO - CONFIG - compliant=False
+16:56:06.057 - INFO - CONFIG - locus=None
+16:56:06.057 - INFO - CONFIG - locus-tag=None
+16:56:06.057 - INFO - CONFIG - keep_contig_headers=False
+16:56:06.057 - INFO - CONFIG - replicon-table=None
+16:56:06.057 - INFO - CONFIG - skip-tRNA=True
+16:56:06.057 - INFO - CONFIG - skip-tmRNA=True
+16:56:06.057 - INFO - CONFIG - skip-rRNA=True
+16:56:06.057 - INFO - CONFIG - skip-ncRNA=True
+16:56:06.057 - INFO - CONFIG - skip-ncRNA-region=True
+16:56:06.057 - INFO - CONFIG - skip-CRISPR=True
+16:56:06.057 - INFO - CONFIG - skip-CDS=True
+16:56:06.058 - INFO - CONFIG - skip-sORF=True
+16:56:06.058 - INFO - CONFIG - skip-gap=True
+16:56:06.058 - INFO - CONFIG - skip-ori=True
+16:56:06.058 - INFO - DB - detected: major=3, minor=0, date=2021-08-9
+16:56:06.200 - INFO - FASTA - imported: id=NC_002695.2, length=5498578, description=Escherichia coli O157:H7 str. Sakai DNA, complete genome, genomic=True, dna=True
+16:56:06.203 - INFO - FASTA - imported: id=NC_002127.1, length=3306, description=Escherichia coli O157:H7 str. Sakai plasmid pOSAK1, complete sequence, genomic=True, dna=True
+16:56:06.203 - INFO - MAIN - imported sequences=2
+16:56:06.203 - INFO - UTILS - qc: revised sequence: id=contig_1, orig-id=NC_002695.2, type=('contig',), complete=True, topology=circular, name=, description='[completeness=complete] [topology=circular] [gcode=11]', orig-description='Escherichia coli O157:H7 str. Sakai DNA, complete genome'
+16:56:06.204 - INFO - UTILS - qc: revised sequence: id=contig_2, orig-id=NC_002127.1, type=plasmid, complete=True, topology=circular, name=unnamed1, description='[completeness=complete] [topology=circular] [gcode=11]', orig-description='Escherichia coli O157:H7 str. Sakai plasmid pOSAK1, complete sequence'
+16:56:06.204 - INFO - FASTA - write genome sequences: path=/tmp/tmpiur_gfal/contigs.fna, description=False, wrap=False
+16:56:06.220 - INFO - UTILS - generated sequence tag prefix: prefix=BALIOELGAO, length=10, MD5=BA528E50A833FE8DC687CBB0F56A20B6
+16:56:06.220 - INFO - MAIN - selected features=0
+16:56:06.231 - INFO - UTILS - generated sequence tag prefix: prefix=BALIOE, length=6, MD5=BA528E50A833FE8DC687CBB0F56A20B6
+16:56:06.232 - INFO - MAIN - locus tag prefix=BALIOE
+16:56:06.232 - INFO - UTILS - genome-size=5501884
+16:56:06.272 - INFO - UTILS - GC=0.505
+16:56:06.272 - INFO - UTILS - N=0.000
+16:56:06.272 - INFO - UTILS - N50=5498578
+16:56:06.273 - INFO - UTILS - coding-ratio=0.000
+16:56:06.273 - INFO - TSV - write tsv: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.tsv
+16:56:06.273 - INFO - GFF - write GFF3: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.gff3
+16:56:06.297 - INFO - INSDC - write GenBank: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.gbff
+16:56:06.576 - INFO - INSDC - write EMBL: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.embl
+16:56:07.100 - INFO - FASTA - write genome sequences: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.fna, description=True, wrap=True
+16:56:07.143 - INFO - FASTA - write feature nucleotide sequences: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.ffn
+16:56:07.144 - INFO - FASTA - write translated CDS/sORF: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.faa
+16:56:07.144 - INFO - JSON - write JSON: path=/home/pierre/Seafile/ABROMICS/galaxy-tools/tools/bakta/test-data/TEST_3/TEST_3.json
+16:56:07.174 - INFO - MAIN - removed tmp dir: /tmp/tmpiur_gfal
