@@ -1,0 +1,30 @@
+
+<macros>
+    <token name="@TOOL_VERSION@">0.7.4</token>
+    <token name="@GSL_VERSION@">2.7</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">21.05</token>
+    <token name="@THREADS@">\${GALAXY_SLOTS:-2}</token>
+
+    <xml name="version_command">
+       <version_command><![CDATA[confindr -v]]></version_command>
+    </xml>
+    <xml name="edam_reference">
+        <edam_operations>
+          <edam_operation>operation_3218</edam_operation>
+          <edam_operation>operation_3187</edam_operation>
+        </edam_operations>
+    </xml>
+  <xml name="requirements">
+    <requirements>
+      <requirement type="package" version="@GSL_VERSION@">gsl</requirement>
+      <requirement type="package" version="@TOOL_VERSION@">confindr</requirement>
+    </requirements>
+  </xml>
+  <xml name="citations">
+      <citations>
+          <citation type="doi">10.7717/peerj.6995</citation>
+          <citation type="doi">10.12688/wellcomeopenres.14826.1</citation>
+      </citations>
+  </xml>
+</macros>

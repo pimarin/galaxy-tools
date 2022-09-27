@@ -1,0 +1,153 @@
+<tool id="confindr" name="ConFindr" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>
+        Find bacterial intra-species contamination in raw Illumina data
+    </description>
+    <macros>
+        <import>macro.xml</import>
+    </macros>
+    <expand macro='edam_reference'/>
+    <expand macro="requirements" />
+    <expand macro="version_command" />
+    <command detect_errors="aggressive"><![CDATA[
+        #import re
+        mkdir input_dir &&
+        mkdir temp_dir &&
+        #*======================================
+                  INPUT INFORMATIONS
+        ======================================*#
+        #if $select_type.input_type == 'fastq'
+            #set $name_R1 = re.sub('[^\w\-\.]', '_', str($select_type.fastq_forward.element_identifier))
+            #set $name_R2 = re.sub('[^\w\-\.]', '_', str($select_type.fastq_reverse.element_identifier))
+            mv $select_type.fastq_forward 'input_dir/R1_$(name_R1).fastq' &&
+            mv $select_type.fastq_reverse 'input_dir/R2_$(name_R2).fastq' &&
+            #set $forward_id = 'R1'
+            #set $reverse_id = 'R2'
+        #elif $select_type.input_type == 'fasta'
+            mv $select_type.fasta_file 'input_dir/$(select_type.fasta_file.element_identifier).fasta' &&
+        #elif $select_type.input_type == 'fastq_collection'
+            #for $value, $paired_fastq in enumerate($select_type.paired_collection)
+                mv '$paired_fastq.forward' 'input_dir/forward_R1_$(value).$(paired_fastq.forward.ext)' &&
+                mv '$paired_fastq.reverse' 'input_dir/reverse_R2_$(value).$(paired_fastq.reverse.ext)' &&
+                #set $forward_id = 'R1'
+                #set $reverse_id = 'R2'
+            #end for
+        #end if
+        #*======================================
+                  START CONFINDR
+        ======================================*#
+        confindr
+        -i input_dir
+        #if $select_type.input_type in ('fastq', 'fastq_collection')
+            --forward_id $forward_id
+            --reverse_id $reverse_id
+        #elif $select_type.input_type == 'fasta'
+            --fasta
+        #end if
+        -dt $data_type
+        -d '$database_name.fields.path'
+        $options.rmlst
+        $options.keep_files
+        --quality_cutoff $options.quality_cutoff
+        --base_cutoff $options.base_cutoff
+        --base_fraction_cutoff $options.base_fraction_cutoff
+        --min_matching_hashes $options.min_matching_hashes
+        $options.cross_details
+        -o output_dir
+        -tmp temp_dir
+        -t @THREADS@
+        ]]>
+    </command>
+    <inputs>
+        <conditional name="select_type">
+            <param name="input_type" type="select" label="Choose input data" help="Input type could be fastq for paired or fasta for unpaired data">
+                <option value="fastq">Fastq files</option>
+                <option value="fasta">Fasta files</option>
+                <option value="fastq_collection">Paired fastq collection</option>
+            </param>
+            <when value="fastq">
+                <param name="fastq_forward" type="data" format="fastqsanger" label="Raw data to check contamination" help="Add data which will be analysed to check any contamination"/>
+                <param name="fastq_reverse" type="data" format="fastqsanger" label="Raw data to check contamination" help="Add data which will be analysed to check any contamination"/>
+            </when>
+            <when value="fasta">
+                <param name="fasta_file" type="data" format="fasta" label="Raw data to check contamination" help="Add data which will be analysed to check any contamination"/>
+            </when>
+            <when value="fastq_collection">
+                <param name="paired_collection" type="data_collection" collection_type="list:paired" format="fastqsanger" label="Raw data to check contamination" help="Add data which will be analysed to check any contamination"/>
+            </when>
+        </conditional>
+        <param name="fasta" argument="--fasta" type="boolean" truevalue="--fasta" falsevalue="" label="Fasta format" help="Check for fasta file instead of fastq, only for unpaired reads"/>
+        <param name="data_type" type="select" label="Type of input data" help="Type of input data, Illumina or Nanopore but no PacBio supported (default: Illumina)">
+            <option value="Illumina">Illumina raw reads</option>
+            <option value="Nanopore">Nanopore raw reads</option>
+        </param>
+        <param name="database_name" type="select" label="pubMLST database">
+            <options from_data_table="confindr_pubmlst_db">
+                <validator message="No pubMLST with rMLST informations is available" type="no_options"/>
+            </options>
+        </param>
+        <section name="options" title="Options">
+            <param name="rmlst" argument="--rmlst" type="boolean" truevalue="--rmlst" falsevalue="" label="Use rMLST database"
+               help="Use rMLST databases over core-gene derived databases">
+            </param>
+            <param name="keep_files" argument="--keep_files" type="boolean" truevalue="--keep_files" falsevalue="" checked="false" label="Keep intermediate files"
+              help="Keep all intermediate files (bam, filetered fastq data)">
+            </param>
+            <param name="quality_cutoff" type="integer" min="0" value="20"  label="Base quality cutoff"
+              help="Base quality needed to support a multiple allele call (default: 20)">
+            </param>
+            <param name="base_cutoff" type="integer" min="0" value="2" label="Base number cutoff"
+              help="Number of bases necessary to support a multiple allele (default: 2)">
+            </param>
+            <param name="base_fraction_cutoff" type="float" min="0" value="0.05" label="Base fraction cutoff"
+              help="Fraction of bases necessary to support a multiple allele call (default: 0.05)">
+            </param>
+            <param name="min_matching_hashes" type="integer" min="0" value="150" label="Minimum match number for a genus"
+              help="Minimum number of matching hashes for a genus to be considered present in a sample (default: 150)">
+            </param>
+            <param name="cross_details" argument="--cross_details" type="boolean" truevalue="--cross_details" falsevalue="" label="Deeper analysis"
+              help="Deeper analysis on samples with two or more genera identified">
+            </param>
+        </section>
+    </inputs>
+    <outputs>
+        <data name="logfile" format="txt" from_work_dir="output_dir/confindr_log.txt" label="${tool.name} on ${on_string}: log file"/>
+        <data name="contamination" format="csv" from_work_dir="output_dir/example_contamination.csv" label="${tool.name} on ${on_string}: contamination list"/>
+        <data name="rmlst" format="txt" from_work_dir="output_dir/example_rmlst.csv" label="${tool.name} on ${on_string}: rmlst contamination"/>
+        <data name="report" format="csv" from_work_dir="output_dir/confindr_report.csv" label="${tool.name} on ${on_string}: confindr report"/>
+    </outputs>
+    <tests>
+        <test>
+            <conditional name="select_type">
+                <param name="input_type" value="fastq"/>
+                <param name="fastq_forward" value="example_R1.fastq.gz"/>
+                <param name="fastq_reverse" value="example_R2.fastq.gz"/>
+                <param name="database_name" value="test-confindr"/>
+            </conditional>
+            <output name="logfile" value="confindr_log.txt"/>
+            <output name="contamination" value="example_contamination.csv"/>
+            <output name="rmlst" value="example_rmlst.csv"/>
+            <output name="report" value="confindr_report.csv"/>
+        </test>
+
+    </tests>
+  <help><![CDATA[
+    **What it does**
+    ConFindr works by looking at conserved core genes
+    either using rMLST genes (53 genes are known to be single copy and conserved across all bacteria with some known exceptions, which ConFindr handles),
+    or custom sets of genes derived from core-genome schemes.
+    As the genes ConFindr looks at are single copy, any sample that has multiple alleles of one or more gene is likely to be contaminated.
+    To identify the presence of multiple alleles in a sample, the following workflow is followed:
+    1. Use Mash to determine the genus of each sample so that genus-specific databases can be constructed and check for interspecies contamination.
+    2. Perform stringent quality trimming and bait out reads that contain rMLST gene sequence, using BBDuk.
+    3. Align reads back to the rMLST genes.
+    4. Look at the alignment to find Contaminating SNVs - those that have sites where more than one base is present.
+
+    **Input data**
+    ConFindr could work on fastq file for paired-end or fasta file for unpaired both Illumina or Nanopore data
+    Confindr use rMLST from pubMLST website
+    You can refine the analysis using optionnal parameters:
+    - The base quality
+    - The number of base
+  ]]></help>
+    <expand macro="citations"/>
+</tool>

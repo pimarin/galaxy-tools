@@ -1,0 +1,2 @@
+#value	name	path
+test-confindr	"rMLST_1"  ${__HERE__}/confindr_db

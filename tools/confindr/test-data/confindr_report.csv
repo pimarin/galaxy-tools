@@ -1,0 +1,2 @@
+Sample,Genus,NumContamSNVs,ContamStatus,PercentContam,PercentContamStandardDeviation,BasesExamined,DatabaseDownloadDate
+example,ND,0,False,ND,ND,0,2022-9-12
